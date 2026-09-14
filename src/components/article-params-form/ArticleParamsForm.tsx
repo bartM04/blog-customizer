@@ -19,37 +19,34 @@ import {
 import styles from './ArticleParamsForm.module.scss';
 
 interface ArticleParamsFormProps {
-	isOpen: boolean;
-	onToggle: () => void;
-	onClose: () => void;
 	onApply: (state: ArticleStateType) => void;
 }
 
 export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
-	isOpen,
-	onToggle,
-	onClose,
 	onApply,
 }) => {
 	const formRef = useRef<HTMLElement>(null);
+	const [isOpen, setIsOpen] = useState(false);
 	const [formState, setFormState] =
 		useState<ArticleStateType>(defaultArticleState);
 
 	useEffect(() => {
+		if (!isOpen) {
+			return;
+		}
+
 		const handleClickOutside = (event: MouseEvent) => {
 			if (formRef.current && !formRef.current.contains(event.target as Node)) {
-				onClose();
+				setIsOpen(false);
 			}
 		};
 
-		if (isOpen) {
-			document.addEventListener('mousedown', handleClickOutside);
-		}
+		document.addEventListener('mousedown', handleClickOutside);
 
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [isOpen, onClose]);
+	}, [isOpen]);
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -57,22 +54,13 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 	};
 
 	const handleReset = () => {
-		const resetState = {
-			fontFamilyOption: { ...defaultArticleState.fontFamilyOption },
-			fontSizeOption: { ...defaultArticleState.fontSizeOption },
-			fontColor: { ...defaultArticleState.fontColor },
-			backgroundColor: { ...defaultArticleState.backgroundColor },
-			contentWidth: { ...defaultArticleState.contentWidth },
-		};
-
-		setFormState(resetState);
-
-		onApply(resetState);
+		setFormState(defaultArticleState);
+		onApply(defaultArticleState);
 	};
 
 	return (
 		<>
-			<ArrowButton isOpen={isOpen} onClick={onToggle} />
+			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
 			<aside
 				ref={formRef}
 				className={clsx(styles.container, {

@@ -11,7 +11,6 @@ import {
 import styles from './app.module.scss';
 
 export const App = () => {
-	const [isOpen, setIsOpen] = useState(false);
 	const [articleState, setArticleState] =
 		useState<ArticleStateType>(defaultArticleState);
 
@@ -27,12 +26,7 @@ export const App = () => {
 					'--bg-color': articleState.backgroundColor.value,
 				} as CSSProperties
 			}>
-			<ArticleParamsForm
-				isOpen={isOpen}
-				onToggle={() => setIsOpen(!isOpen)}
-				onClose={() => setIsOpen(false)}
-				onApply={setArticleState}
-			/>
+			<ArticleParamsForm onApply={setArticleState} />
 			<Article />
 		</main>
 	);
